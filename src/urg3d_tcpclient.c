@@ -236,8 +236,8 @@ int urg3d_tcpclient_read(urg3d_tcpclient_t* cli
         char tmpbuf[URG3D_BUFSIZE];
         // receive with non-blocking mode.
 #if defined(URG3D_WINDOWS_OS)
-        int no_timeout = 1;
-        setsockopt(sock, SOL_SOCKET, SO_RCVTIMEO, (const char *)&no_timeout, sizeof(struct timeval));
+        u_long val = 1;
+        ioctlsocket(sock, FIONBIO, &val);
         n = recv(sock, tmpbuf, URG3D_BUFSIZE - num_in_buf, 0);
 #else
         n = recv(sock, tmpbuf, URG3D_BUFSIZE - num_in_buf, MSG_DONTWAIT);
@@ -257,6 +257,8 @@ int urg3d_tcpclient_read(urg3d_tcpclient_t* cli
     //  lastly recv with blocking but with time out to read necessary size.
     {
 #if defined(URG3D_WINDOWS_OS)
+        u_long val = 0;
+        ioctlsocket(sock, FIONBIO, &val);
         setsockopt(sock, SOL_SOCKET, SO_RCVTIMEO,
                    (const char *)&timeout, sizeof(struct timeval));
 #else
