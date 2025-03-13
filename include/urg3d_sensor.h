@@ -270,11 +270,15 @@ extern "C" {
         URG3D_COMPASS_DATA              = (1 << 2),
         URG3D_TEMPERATURE_DATA          = (1 << 3),
     } urg3d_auxiliary_type_t;
+	inline urg3d_auxiliary_type_t operator |(urg3d_auxiliary_type_t a, urg3d_auxiliary_type_t b)
+	{ return static_cast<urg3d_auxiliary_type_t>(static_cast<int>(a) | static_cast<int>(b)); }
+	inline urg3d_auxiliary_type_t& operator |=(urg3d_auxiliary_type_t& a, urg3d_auxiliary_type_t b)
+	{ return a = a | b; }
 
     typedef struct {
         unsigned int   timestamp_ms;
         urg3d_auxiliary_record_t  records[URG3D_MAX_AUX_COUNT];
-        urg3d_auxiliary_type_t    type;
+		urg3d_auxiliary_type_t   type;
         int                      record_count;
         char                     status[3]; //without LF
     } urg3d_auxiliary_data_t;

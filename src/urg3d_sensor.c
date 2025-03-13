@@ -299,12 +299,12 @@ int urg3d_low_get_ri( urg3d_t* const urg, urg3d_vssp_header_t* const header
     printf("sizeof(*range_index) = %d\n", sizeof(*range_index));
     printf("range_index->index_length = %u\n", range_index->index_length);
     printf("range_index->nspots = %u\n", range_index->nspots);
-    for(i = 0; i < range_index->nspots + 1; i++) {
+    for(auto i = 0; i < range_index->nspots + 1; i++) {
         printf("range_index->index[%d] = %u\n", i, range_index->index[i]);
     }
     printf("sizeof(*data_range_intensity) = %d\n", sizeof(*data_range_intensity));
-    for(i = 0; i < range_index->index[range_index->nspots]; i++) {
-        printf("data_range_intensity->raw[%d].range_mm = %u,  data_range_intensity->raw[%d].intensity = %u\n",  i, data_range_intensity->raw[i].range_mm, i, data_range_intensity->raw[i].intensity);
+    for(auto i = 0; i < range_index->index[range_index->nspots]; i++) {
+        //printf("data_range_intensity->raw[%d].range_mm = %u,  data_range_intensity->raw[%d].intensity = %u\n",  i, data_range_intensity->raw[i].range_mm, i, data_range_intensity->raw[i].intensity);
     }
     printf("\n");
 #endif
@@ -360,12 +360,12 @@ int urg3d_low_get_ro( urg3d_t* const urg
     printf("sizeof(*range_index) = %d\n", sizeof(*range_index));
     printf("range_index->index_length = %u\n", range_index->index_length);
     printf("range_index->nspots = %u\n", range_index->nspots);
-    for(i = 0; i < range_index->nspots+1; i++) {
+    for(auto i = 0; i < range_index->nspots+1; i++) {
         printf("range_index->index[%d] = %u\n", i, range_index->index[i]);
     }
     printf("sizeof(*data_range) = %d\n", sizeof(*data_range));
-    for(i = 0; i < range_index->index[range_index->nspots]; i++) {
-        printf("data_range->raw[%d].range_mm = %u\n",  i, data_range->raw[i].range_mm);
+    for(auto i = 0; i < range_index->index[range_index->nspots]; i++) {
+        //printf("data_range->raw[%d].range_mm = %u\n",  i, data_range->raw[i].range_mm);
     }
     printf("\n");
 #endif
@@ -425,7 +425,7 @@ int urg3d_low_get_ax( urg3d_t* const urg
     printf("ax_header->data_count = %d\n",ax_header->data_count);
     printf("ax_header->data_ms = %d\n", ax_header->data_ms);
     printf("sizeof(*ax_data) = %d\n", sizeof(*ax_data));
-    for(i = 0; i < count; i++) {
+    for(auto i = 0; i < count; i++) {
         printf("ax_data->value[%d] = %ld\n", i, ax_data->value[i]);
     }
     printf("\n");
@@ -818,6 +818,15 @@ int urg3d_high_get_measurement_data(urg3d_t * const urg
     data->spot_count = lib_range_index.nspots;
     strncpy(data->status, lib_header.status, sizeof(data->status));
 
+//#ifdef DEBUG_HIGH
+//	printf("data->timestamp_ms = %d\n", data->timestamp_ms);
+//	printf("data->frame_number = %d\n", data->frame_number);
+//	printf("data->h_field_number = %d\n", data->h_field_number);
+//	printf("data->v_field_number = %d\n", data->v_field_number);
+//	printf("data->line_number = %d\n", data->line_number);
+//	printf("data->spot_count = %d\n", data->spot_count);
+//#endif
+
     for(spot=0; spot < lib_range_index.nspots; ++spot) {
         const double horizontal_rad = ((double)lib_range_header.line_head_h_angle_ratio + (double)(lib_range_header.line_tail_h_angle_ratio - lib_range_header.line_head_h_angle_ratio)*urg->spot_h_angle_ratio[spot])/65535*2*M_PI;
         const double cos_horizontal_rad = cos(horizontal_rad);
@@ -851,6 +860,7 @@ int urg3d_high_get_measurement_data(urg3d_t * const urg
     }
 
 #ifdef DEBUG_HIGH
+	printf("data->frame_number = %d\n", data->frame_number);
     for(spot=0; spot < data->spot_count; ++spot) {
         for(echo=0; echo < data->spots[spot].echo_count; ++echo) {
             printf("data->spots[%d].point[%d].x_m = %lf\n", spot, echo, data->spots[spot].point[echo].x_m);
